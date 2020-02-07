@@ -108,6 +108,9 @@ public class GlobstarMatcher
 
     public boolean matchesFullPath(final String fullFilename)
     {
+    	if (fullFilename.endsWith("/"))
+    		return true;
+
         return itsGlobRegex.matcher(fullFilename).matches();
     }
 }
