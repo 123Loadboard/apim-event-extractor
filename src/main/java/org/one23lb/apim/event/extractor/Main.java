@@ -15,14 +15,51 @@ public class Main
 	{
 		try
 		{
-			CmdLine.load(args);
+			CmdLine.safeLoad(args);
 
-			final Properties props = Configuration.get();
-			final String connectionString = props.getProperty("storage.connectionString");
-			final String containerName = props.getProperty("storage.containerName");
-			final AzureStorageClientParameters params = new AzureStorageClientParameters(connectionString, containerName);
-			final AzureStorageClient client = CmdLine.isEventHubData() ?
-					new EventDataClient(params) : new ApimHttpMessageProcessor(params);
+			final String downloadDir = CmdLine.getDownload();
+
+			final DataProcessor proc;
+
+			if (downloadDir != null)
+			{
+				proc = new DownloadClient(downloadDir);
+			}
+			else
+			{
+				proc = CmdLine.isEventHubData() ?
+						new EventDataProcessor() : new ApimHttpMessageProcessor();
+			}
+
+			final StorageClient client;
+
+			if (CmdLine.isLocal())
+			{
+				client = new LocalClient(proc);
+			}
+			else
+			{
+				final Properties props = Configuration.get();
+				final String connectionString = props.getProperty("storage.connectionString");
+				final String containerName = props.getProperty("storage.containerName");
+
+				if (connectionString == null)
+				{
+					System.err.println("you must specify the connection string.");
+					System.exit(1);
+				}
+
+				if (containerName == null)
+				{
+					System.err.println("you must specify the container name.");
+					System.exit(1);
+				}
+
+				final AzureStorageClientParameters params = new AzureStorageClientParameters(
+						connectionString, containerName);
+
+				client = new AzureStorageClient(params, proc);
+			}
 
 			for (final String filename : CmdLine.getArgs())
 			{
