@@ -24,6 +24,8 @@ public class DownloadClient extends DataProcessor
 		if (!f.getParentFile().mkdirs())
 			throw new StorageException("ERR", "Unable to create " + f.getAbsolutePath(), null);
 
+		boolean success = false;
+
 		try (final FileOutputStream fos = new FileOutputStream(f))
 		{
 			final byte[] buf = new byte[16384];
@@ -33,7 +35,10 @@ public class DownloadClient extends DataProcessor
 				final int avail = is.read(buf);
 
 				if (avail < 0)
+				{
+					success = true;
 					return;
+				}
 
 				fos.write(buf, 0, avail);
 			}
@@ -41,6 +46,11 @@ public class DownloadClient extends DataProcessor
 		catch (final IOException e)
 		{
 			throw StorageException.translateClientException(e);
+		}
+		finally
+		{
+			if (!success)
+				f.delete();
 		}
 	}
 }
