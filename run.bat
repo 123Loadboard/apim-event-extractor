@@ -26,4 +26,6 @@ GOTO NextArg
 
 REM http-correlated/data/year=2020/month=02/day=03/hour=22/min=30/part-00072-9c2580ab-8f81-4629-9af0-e4d7a41151fc.c000.avro
 
+IF DEFINED DEBUG @ECHO ON
 java %JVMARGS% %CONFIG_PROPERTIES% -jar "%ROOT%\target\apim-event-extractor-0.0.1-SNAPSHOT.jar" %APPARGS%
+@ECHO OFF
