@@ -3,6 +3,7 @@ package org.one23lb.apim.event.extractor;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.EnumSet;
+import java.util.logging.Logger;
 
 import com.microsoft.azure.storage.ResultContinuation;
 import com.microsoft.azure.storage.ResultSegment;
@@ -16,6 +17,8 @@ import com.microsoft.azure.storage.blob.ListBlobItem;
 
 public class AzureStorageClient extends StorageClient
 {
+	private static final Logger LOG = Logger.getLogger(AzureStorageClient.class.getName());
+
 	private final CloudBlobContainer itsContainer;
 	private final DataProcessor itsProc;
 
@@ -90,7 +93,7 @@ public class AzureStorageClient extends StorageClient
 	{
 		try (final BlobInputStream blobIS = blob.openInputStream())
 		{
-			System.out.println("// " + blob.getName());
+			LOG.fine(blob.getName());
 
 			itsProc.process(blobIS, blob.getName());
 		}

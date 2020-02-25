@@ -139,14 +139,26 @@ public final class CmdLine
 		try (final PrintWriter pw = new PrintWriter(sw))
 		{
 			formatter.printUsage(pw, width, "-jar apim-event-extrator.jar ", OPTIONS);
+
+			pw.flush();
 		}
 
-		formatter.printHelp(
-				sw.toString().trim() + " GLOB#1 GLOB#2 ...",
-				"This tool allows interacting with Azure Storage to retrieve and/or process data that was persisted " +
-				"by EventHub or Databricks." + NEWLINE +
-				"The GLOB patterns support the globstar syntax (https://en.wikipedia.org/wiki/Glob_(programming)#Unix-like).",
-				OPTIONS,
-				"");
+		try (final PrintWriter err = new PrintWriter(System.err))
+		{
+			formatter.printHelp(
+					err,
+					formatter.getWidth(),
+					sw.toString().trim() + " GLOB#1 GLOB#2 ...",
+					"This tool allows interacting with Azure Storage to retrieve and/or process data that was persisted " +
+					"by EventHub or Databricks." + NEWLINE +
+					"The GLOB patterns support the globstar syntax (https://en.wikipedia.org/wiki/Glob_(programming)#Unix-like).",
+					OPTIONS,
+					formatter.getLeftPadding(),
+					formatter.getDescPadding(),
+					"",
+					false);
+
+			err.flush();
+		}
 	}
 }

@@ -3,11 +3,14 @@ package org.one23lb.apim.event.extractor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import com.microsoft.azure.storage.StorageException;
 
 public class LocalClient extends StorageClient
 {
+	private static final Logger LOG = Logger.getLogger(LocalClient.class.getName());
+
 	private final DataProcessor itsProc;
 
 	public LocalClient(final DataProcessor proc)
@@ -64,7 +67,7 @@ public class LocalClient extends StorageClient
 		}
 		else
 		{
-			System.out.println("// Unknown file type : " + prefix);
+			LOG.warning("Unknown file type : " + prefix);
 		}
 	}
 }

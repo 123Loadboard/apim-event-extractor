@@ -3,6 +3,7 @@ package org.one23lb.apim.event.extractor;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 import org.apache.avro.file.DataFileStream;
 import org.apache.avro.generic.GenericDatumReader;
@@ -13,6 +14,8 @@ import com.microsoft.azure.storage.StorageException;
 
 public abstract class AvroDataProcessor<D> extends DataProcessor
 {
+	private static final Logger LOG = Logger.getLogger(AvroDataProcessor.class.getName());
+
 	@Override
 	public void process(final InputStream is, String streamName) throws StorageException
 	{
@@ -20,7 +23,7 @@ public abstract class AvroDataProcessor<D> extends DataProcessor
 
 		try (final DataFileStream<D> dataFileReader = new DataFileStream<>(is, datumReader))
 		{
-			System.out.println("// " + dataFileReader.getSchema().toString(false));
+			LOG.fine(dataFileReader.getSchema().toString(false));
 
 			while (dataFileReader.hasNext())
 			{
